@@ -1,0 +1,2 @@
+django==1.1.1
+-e git+git@git.pbs.org:pbs/simplersa.git#egg=simplersa

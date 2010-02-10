@@ -9,7 +9,7 @@ version = '0.1.0'
 setup(
     name='django-deploy',
     version=version,
-    description="",
+    description="A utility for Django to create/deploy Django applications.",
     long_description=open('README.rst', 'r').read(),
     author='Nowell Strite',
     author_email='nowell@strite.org',

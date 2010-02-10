@@ -1,0 +1,54 @@
+#!/bin/sh
+
+if ! command -v virtualenv &>/dev/null; then
+    echo '\e[32mVirtual environment not found. Installing.\e[0m'
+    sudo easy_install virtualenv
+fi
+
+if [ -e ./.ve~/ ]; then
+    echo "\e[32mDeleting old temporary virtualenv\e[0m"
+    rm -Rf ./.ve~
+fi
+
+echo "\e[32mCreating new virtualenv\e[0m"
+virtualenv .ve~ --no-site-packages --distribute
+
+# Install better python module installer
+.ve~/bin/easy_install -U pip
+
+# Create directory to store pip download cache
+mkdir -p /tmp/.pip-cache
+
+# Install base python modules
+echo "\e[32mInstalling base modules\e[0m"
+./.ve~/bin/pip install -U --src=./.ve~/src/ -E ./.ve~/ Fabric==0.9.0 ipython django-config
+
+# Install base project modules
+echo "\e[32mInstalling base project modules\e[0m"
+./.ve~/bin/pip install -U --src=./.ve~/src/ -E ./.ve~/ -r REQUIREMENTS
+
+PYTHON_VERSION=$(ls .ve~/lib/)
+echo '
+../../../../src
+../../../../lib
+' >> .ve~/lib/$PYTHON_VERSION/site-packages/easy-install.pth
+
+echo "\e[32mMaking virtualenv relocatable\e[0m"
+PYTHONPATH=$PYTHONPATH:$PWD/.ve~/lib/$PYTHON_VERSION/site-packages virtualenv --relocatable ./.ve~/
+
+echo "\e[32mCleaning up python directory\e[0m"
+find .ve~/ -name '*.pyc' | xargs rm -f
+
+if [ -e ve/ ]; then
+    echo "\e[32mSwapping virtualenv's\e[0m"
+    mv ./ve ./.ve; mv ./.ve~ ./ve;
+    echo "\e[32mDeleting old virtualenv\e[0m"
+    rm -Rf ./.ve/
+else
+    mv ./.ve~ ./ve;
+fi
+
+echo "\e[32mRunning syncdb\e[0m"
+CONFIG_IDENTIFIER_INTERACTIVE=False CONFIG_IDENTIFIER=local ve/bin/python bin/manage.py syncdb --noinput
+
+echo "\e[35mDone!\e[0m"

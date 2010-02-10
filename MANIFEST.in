@@ -3,3 +3,5 @@ include LICENSE
 include AUTHORS
 include MANIFEST.in
 include INSTALL
+
+recursive-include djangodeploy/default-template *

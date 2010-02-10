@@ -1,0 +1,10 @@
+Getting Started
+===============
+
+Run:
+
+::
+
+  bin/bootstrap
+  bin/manage.py syncdb
+  bin/manage.py runserver

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import djangodeploy
 from djangodeploy.config import load_config
 from djangodeploy.template import replace_file_markers, copy_project_template
 from optparse import OptionParser
@@ -7,7 +8,8 @@ import os
 
 if __name__ == '__main__':
     parser = OptionParser()
-    parser.add_option("-t", "--template", dest="template", help="Directory to treat as a Django template", default='.')
+    default_path = os.path.join(os.path.dirname(djangodeploy.__file__), 'default-template')
+    parser.add_option("-t", "--template", dest="template", help="Directory to treat as a Django template", default=default_path)
     parser.set_usage('%prog [options] destination')
     options, args = parser.parse_args()
     if len(args) != 1:
